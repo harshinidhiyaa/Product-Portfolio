@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Eliza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* DARK (default) */
+    --cork: #2b1d12;
+    --cork-grain: #3a2817;
+    --bg-glow: rgba(224,136,74,0.10);
+    --paper: #f4ecdf;
+    --paper-2: #fff8e7;
+    --paper-3: #eef2e4;
+    --ink: #2a2420;
+    --ink-soft: #5a5046;
+    --ember: #e0884a;
+    --ember-soft: rgba(224, 136, 74, 0.35);
+    --gold: #c9a35f;
+    --text-on-cork: #f4ecdf;
+    --text-on-cork-dim: #d8c6b2;
+    --pin-shadow: rgba(0,0,0,0.55);
+  }
+
+  html[data-theme="light"]{
+    --cork: #d8b899;
+    --cork-grain: #c9a578;
+    --bg-glow: rgba(255,255,255,0.25);
+    --paper: #fffdf8;
+    --paper-2: #fff9ec;
+    --paper-3: #f3f6ec;
+    --ink: #2a2420;
+    --ink-soft: #6b5f53;
+    --ember: #c1592a;
+    --ember-soft: rgba(193, 89, 42, 0.25);
+    --gold: #a97a3f;
+    --text-on-cork: #3a2a1a;
+    --text-on-cork-dim: #5e4a36;
+    --pin-shadow: rgba(60,30,10,0.25);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+
+  body {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, var(--bg-glow), transparent 60%),
+      var(--cork);
+    color: var(--text-on-cork);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(20px, 4vw, 48px);
+    overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* ---------------- THEME TOGGLE ---------------- */
+  .theme-toggle {
+    position: absolute;
+    top: clamp(18px, 3vw, 32px);
+    right: clamp(18px, 4vw, 48px);
+    background: none;
+    border: 1px solid var(--gold);
+    color: var(--text-on-cork-dim);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .theme-toggle:hover {
+    color: var(--ember);
+    border-color: var(--ember);
+    background: var(--ember-soft);
+  }
+
+  /* ---------------- HEADER ---------------- */
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding-bottom: clamp(12px, 1.6vw, 18px);
+    position: relative;
+  }
+
+  .name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(24px, 3.2vw, 34px);
+    line-height: 1;
+    margin: 0;
+    color: var(--text-on-cork);
+    text-shadow: 0 0 18px var(--ember-soft);
+    animation: flicker 7s ease-in-out infinite;
+  }
+
+  @keyframes flicker {
+    0%, 100% { text-shadow: 0 0 24px var(--ember-soft); }
+    50% { text-shadow: 0 0 40px var(--ember-soft); }
+  }
+
+  .tagline {
+    font-size: clamp(13px, 1.6vw, 16px);
+    color: var(--text-on-cork-dim);
+    max-width: 56ch;
+    margin: 4px 0 0 0;
+    font-weight: 400;
+  }
+
+  .subtext {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    margin: 2px 0 0 0;
+    text-transform: uppercase;
+  }
+
+  /* ---------------- MAIN / BOARD ---------------- */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(14px, 2vw, 20px);
+    padding: clamp(24px, 4vw, 40px) 0;
+  }
+
+  .board-label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-on-cork-dim);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .board-label::before, .board-label::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--text-on-cork-dim);
+    opacity: 0.25;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(28px, 3vw, 40px);
+    align-items: start;
+  }
+
+  .card {
+    position: relative;
+    color: var(--ink);
+    border-radius: 1px;
+    padding: clamp(28px, 3.4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-decoration: none;
+    min-height: 360px;
+    transform: rotate(var(--tilt, 0deg)) scale(1.04);
+    transition: transform 0.35s cubic-bezier(.2,.8,.2,1), box-shadow 0.35s ease;
+    box-shadow:
+      3px 6px 0 rgba(0,0,0,0.07),
+      0 22px 44px -16px rgba(0,0,0,0.5);
+  }
+
+  /* Card 1 — index card */
+  .card:nth-child(1) {
+    --tilt: -2deg;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--paper) 31px, rgba(180,80,80,0.18) 32px, var(--paper) 33px),
+      repeating-linear-gradient(transparent 0, transparent 31px, rgba(120,140,180,0.12) 31px, rgba(120,140,180,0.12) 32px);
+    background-size: 100% 100%, 100% 32px;
+  }
+
+  /* Card 2 — sticky note */
+  .card:nth-child(2) {
+    --tilt: 1.5deg;
+    background: var(--paper-2);
+  }
+
+  /* Card 3 — torn paper / legal pad */
+  .card:nth-child(3) {
+    --tilt: -0.8deg;
+    background: var(--paper-3);
+    clip-path: polygon(0% 1%, 3% 0%, 12% 0.6%, 25% 0%, 38% 0.5%, 50% 0%, 63% 0.6%, 76% 0%, 89% 0.5%, 100% 0%, 100% 100%, 0% 100%);
+  }
+
+  /* tape strips */
+  .card::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-3deg);
+    width: 64px;
+    height: 24px;
+    background: var(--ember-soft);
+    opacity: 0.85;
+    box-shadow: 0 2px 4px var(--pin-shadow);
+  }
+
+  .card:nth-child(1)::after { left: 24%; transform: translateX(-50%) rotate(-5deg); background: rgba(193,89,42,0.35); }
+  .card:nth-child(2)::after { left: 72%; transform: translateX(-50%) rotate(4deg); background: rgba(224,136,74,0.45); }
+  .card:nth-child(3)::after { left: 46%; transform: translateX(-50%) rotate(-2deg); background: rgba(107,134,179,0.35); }
+
+  .card:hover, .card:focus-visible {
+    transform: rotate(0deg) translateY(-8px) scale(1.07);
+    box-shadow:
+      2px 6px 0 rgba(0,0,0,0.06),
+      0 26px 50px -18px rgba(0,0,0,0.55),
+      0 0 50px -8px var(--ember-soft);
+    outline: none;
+    z-index: 2;
+  }
+
+  .card-index {
+    font-family: 'Caveat', cursive;
+    font-weight: 600;
+    font-size: 30px;
+    color: var(--ember);
+    line-height: 1;
+  }
+
+  .card-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(20px, 2.4vw, 25px);
+    line-height: 1.25;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .card-type {
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1px dashed rgba(42,36,32,0.2);
+    padding-bottom: 10px;
+  }
+
+  .card-focus {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    flex: 1;
+  }
+
+  .card-cta {
+    margin-top: auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-cta .arrow {
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-cta .arrow {
+    transform: translateX(5px);
+  }
+
+  /* ---------------- FOOTER ---------------- */
+  footer {
+    border-top: 1px solid rgba(201, 163, 95, 0.18);
+    padding-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+  }
+
+  .status {
+    color: var(--text-on-cork-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ember);
+    box-shadow: 0 0 10px var(--ember);
+    animation: breathe 2.6s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.5; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  .links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    color: var(--text-on-cork-dim);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(201,163,95,0.25);
+    padding-bottom: 1px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .links a:hover, .links a:focus-visible {
+    color: var(--ember);
+    border-color: var(--ember);
+  }
+
+  /* ---------------- RESPONSIVE ---------------- */
+  @media (max-width: 880px) {
+    .cards { grid-template-columns: 1fr; gap: 36px; }
+    .card { min-height: auto; transform: none !important; }
+    .card::after { display: none; }
+    .theme-toggle { position: static; align-self: flex-end; margin-bottom: 12px; }
+    header { padding-top: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, .name, .status .dot { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark mode">Night ☾</button>
+
+  <header>
+    <h1 class="name">Eliza</h1>
+    <p class="tagline">Product thinking across AI systems, user behavior, and complex technical environments.</p>
+    <p class="subtext">Ashoka University CS Graduate — Ex-Axis Bank, Website Channel Operations</p>
+  </header>
+
+  <main>
+    <div class="cards">
+
+      <a class="card" href="./libra-ai-concept.html">
+        <span class="card-index">01</span>
+        <h2 class="card-title">Libra AI Concept: Handling Interaction Faults</h2>
+        <div class="card-type">Original Concept &amp; System Architecture</div>
+        <p class="card-focus">How to design an interface for multi-step AI workflows when an automated agent hits an API bottleneck or loses the thread of what the user was trying to do.</p>
+        <span class="card-cta">Open the case file <span class="arrow">→</span></span>
+      </a>
+
+      <a class="card" href="./axis-bank-teardown.html">
+        <span class="card-index">02</span>
+        <h2 class="card-title">Axis Bank Teardown: Funnel Friction &amp; Drop-offs</h2>
+        <div class="card-type">User Behavior &amp; Analytics Study</div>
+        <p class="card-focus">A real-world dive into why legacy banking funnels quietly lose people — in the waiting, the redirects, the moments between one screen and the next.</p>
+        <span class="card-cta">Read the analysis <span class="arrow">→</span></span>
+      </a>
+
+      <a class="card" href="./ai-latency-teardown.html">
+        <span class="card-index">03</span>
+        <h2 class="card-title">AI Teardown: The Latency vs. Accuracy Trade-off</h2>
+        <div class="card-type">Product Mechanics &amp; Model Constraints</div>
+        <p class="card-focus">How multi-step AI search tools weigh the time an agent needs to think against the user's instinct that an answer should already be there.</p>
+        <span class="card-cta">See the breakdown <span class="arrow">→</span></span>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="status"><span class="dot"></span> Open for AI Product / Product Systems internships</div>
+    <div class="links">
+      <a href="./resume.pdf" target="_blank" rel="noopener">Resume</a>
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', () => {
+      const isLight = root.getAttribute('data-theme') === 'light';
+      root.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      btn.textContent = isLight ? 'Night ☾' : 'Day ☀';
+    });
+  </script>
+
+</body>
+</html>
