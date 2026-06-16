@@ -1,96 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Eliza | Product Manager</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%233b82f6%22/></svg>">
+<title>Product Teardown: ChatGPT Memory | Eliza</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f172a;
+    --bg: #ffffff;
     --ink: #0f172a;
-    --ink-soft: #475569;
+    --ink-soft: #334155;
     --signal: #3b82f6;
-    --text-on-bg: #f8fafc;
-    --text-on-bg-dim: #94a3b8;
-    --card-bg: #e2e8f0;
+    --border-dim: rgba(15, 23, 42, 0.15);
+    --box-bg: rgba(59, 130, 246, 0.05);
+  }
+
+  [data-theme="dark"] {
+    --bg: #0f172a;
+    --ink: #f8fafc;
+    --ink-soft: #94a3b8;
+    --signal: #3b82f6;
     --border-dim: rgba(59, 130, 246, 0.2);
+    --box-bg: rgba(59, 130, 246, 0.05);
   }
 
-  body { 
-    margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-on-bg); 
-    min-height: 100vh; display: grid; 
-    grid-template-columns: 450px 1fr; gap: 64px; padding: 80px; align-items: center; transition: 0.4s;
-  }
+  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-soft); line-height: 1.6; padding: 60px 40px; transition: 0.3s; }
+  .container { max-width: 850px; margin: 0 auto; position: relative; }
 
-  .left-panel { display: flex; flex-direction: column; gap: 24px; }
-  .name { font-weight: 800; font-size: 42px; margin: 0; }
-  .tagline { font-size: 22px; line-height: 1.4; font-weight: 500; max-width: 400px; }
-  .subtext { font-size: 14px; color: var(--text-on-bg-dim); margin-bottom: 24px; }
+  h1, h2, h3, strong { color: var(--ink); }
+  h1 { font-weight: 800; font-size: 40px; line-height: 1.1; margin-bottom: 24px; }
+  .subtitle { font-size: 16px; font-weight: 600; color: var(--signal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+  h2 { color: var(--signal); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 56px; margin-bottom: 20px; }
+  h3 { font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 12px; }
+  p { margin-bottom: 20px; font-size: 16px; }
+
+  .diagram { background: var(--box-bg); padding: 32px; border-radius: 8px; margin: 40px 0; border: 1px solid var(--border-dim); font-family: monospace; color: var(--ink); overflow-x: auto; white-space: pre; font-size: 13px; line-height: 1.4; }
   
-  .footer-links { border-top: 1px solid var(--border-dim); padding-top: 24px; display: flex; flex-direction: column; gap: 16px; }
-  .status { font-size: 14px; color: var(--text-on-bg-dim); display: flex; align-items: center; gap: 8px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 8px var(--signal); }
-  .nav-links { display: flex; gap: 24px; }
-  .nav-links a { color: var(--text-on-bg-dim); text-decoration: none; font-size: 15px; border-bottom: 1px solid var(--border-dim); }
-  .nav-links a:hover { color: var(--signal); border-color: var(--signal); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 32px 0; }
+  .box { background: var(--box-bg); padding: 24px; border-radius: 6px; border-left: 3px solid var(--signal); }
 
-  .theme-toggle { position: absolute; top: 64px; right: 64px; background: none; border: 1px solid var(--border-dim); color: var(--text-on-bg-dim); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-transform: uppercase; font-size: 10px; }
-
-  .card { 
-    background: var(--card-bg); color: var(--ink); padding: 56px; border-radius: 12px; 
-    text-decoration: none; width: 100%; max-width: 700px; border: 1px solid transparent;
-    display: block; box-shadow: 0 20px 50px rgba(0,0,0,0.3); transition: 0.3s; 
-  }
-  .card:hover { transform: translateY(-8px); border: 1px solid var(--signal); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-  
-  .card-eyebrow { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--signal); text-transform: uppercase; letter-spacing: 0.15em; }
-  .card-title { font-weight: 800; font-size: 36px; margin: 20px 0; line-height: 1.1; }
-  .card-type { font-size: 13px; color: var(--ink-soft); border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 20px; margin-bottom: 28px; }
-  .card-focus { font-size: 18px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 40px; }
-  .card-cta { font-weight: 700; font-size: 15px; color: var(--signal); }
+  .theme-toggle { position: absolute; top: -20px; right: 0; background: none; border: 1px solid var(--border-dim); color: var(--ink); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-transform: uppercase; font-size: 10px; }
+  .back-link { display: inline-block; margin-bottom: 24px; color: var(--signal); text-decoration: none; font-weight: 600; font-size: 14px; }
 </style>
 </head>
 <body>
 
+<div class="container">
   <button class="theme-toggle" id="themeToggle">Night ☾</button>
+  <a href="./index.html" class="back-link">← Back to Portfolio</a>
+  
+  <p class="subtitle">PRODUCT PORTFOLIO · STRATEGIC TEARDOWN</p>
+  <h1>The Evolution of AI Memory: From Information Accumulation to Understanding</h1>
+  <p><strong>Product:</strong> ChatGPT (OpenAI) — Memory Feature</p>
+  <p><strong>Vision:</strong> Evolving ChatGPT from an assistant that remembers static facts into a partner that accumulates user understanding.</p>
+  <p><strong>Core Philosophy:</strong> The most valuable thing users teach ChatGPT isn't who they are—it's how they make decisions.</p>
 
-  <aside class="left-panel">
-    <h1 class="name">Eliza</h1>
-    <p class="tagline">Product thinking across AI systems, user behavior, and complex technical environments.</p>
-    <p class="subtext">Ashoka University CS Graduate — Ex-Axis Bank, Website Channel Operations</p>
-    
-    <div class="footer-links">
-      <div class="status"><span class="dot"></span> Open for AI Product / Systems roles</div>
-      <div class="nav-links">
-        <a href="./Eliza_Name_PM_Resume.pdf">Resume</a>
-        <a href="#">GitHub</a>
-        <a href="#">LinkedIn</a>
-      </div>
+  <h2>Why Now?</h2>
+  <p>AI assistants are quickly becoming long-term collaborators. As base model intelligence converges, continuity—not just raw reasoning power—will become the ultimate product differentiator. Memory must evolve from remembering users to understanding how they think.</p>
+
+  <h2>01 — TARGET USERS</h2>
+  <p><strong>Two users, one memory model — and it only fits one of them</strong></p>
+  <p>ChatGPT Memory currently uses a single primitive: fact-based memory. If you mention you live in Chennai or code in Python, it remembers. This works for a casual user, but fails a collaborative power user entirely.</p>
+  <div class="grid">
+    <div class="box">
+      <h3>CASUAL USER</h3>
+      <p><strong>Behavior:</strong> Uses ChatGPT for self-contained tasks—drafting emails, quick Q&A, summarizing content.</p>
+      <p><strong>Memory Need:</strong> Convenience. Don't make me re-state my city or preferred coding language. Static facts serve this user perfectly.</p>
     </div>
-  </aside>
+    <div class="box">
+      <h3>POWER / COLLABORATIVE USER</h3>
+      <p><strong>Behavior:</strong> Uses ChatGPT as a strategic thought partner across weeks—research, engineering trade-offs, and evolving projects.</p>
+      <p><strong>Memory Need:</strong> Reasoning continuity. Not just isolated facts, but the logic and constraints behind decisions—the why, not just the what.</p>
+    </div>
+  </div>
 
-  <main class="right-panel">
-    <a class="card" href="./libra-ai-concept.html">
-      <div class="card-eyebrow">
-        <span>Featured Project</span>
-        <span>5 min read</span>
-      </div>
-      <h2 class="card-title">Handling Interaction Faults in Multi-Step AI Agents</h2>
-      <div class="card-type">Original Concept & System Architecture</div>
-      <p class="card-focus">A deep-dive into how to design an interface for multi-step AI workflows when an automated agent hits an API bottleneck or loses the thread of user intent. Focus on state recovery and error handling in LLM-driven environments.</p>
-      <span class="card-cta">Read the case study →</span>
-    </a>
-  </main>
+  <h2>02 — WHAT'S WORKING</h2>
+  <p>The current baseline handles explicit details well. Any new recommendation must preserve these features to protect user trust.</p>
+  <p><strong>Silent Entity Extraction:</strong> Facts are captured automatically and silently mid-conversation. There is no friction or workflow interruption.</p>
+  <p><strong>User-Controlled Privacy:</strong> A centralized memory UI makes it simple to view, edit, or delete any specific fact, maintaining an essential trust layer.</p>
 
-  <script>
-    const btn = document.getElementById('themeToggle');
-    btn.addEventListener('click', () => {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
-      btn.textContent = isLight ? 'Night ☾' : 'Day ☀';
-    });
-  </script>
+  <h2>03 — WHAT'S BROKEN</h2>
+  <h3>The cognitive gap: outcomes without reasoning</h3>
+  <p>Current Memory treats user identity as a flat list of isolated facts. It remembers what we say, but forgets why we said it.</p>
+  <p><strong>The Structural Mismatch:</strong> Today's memory model stores final outcomes (state). A true collaborative partner must store the reasoning behind them (decision functions).</p>
+  <p><strong>The Pivot Problem:</strong> Imagine a software developer working on a project: Day 1: They tell ChatGPT, "We are using AWS for our backend." ChatGPT memorizes this fact. Day 3: Because AWS pricing is too high for their startup budget, they tell ChatGPT, "Actually, let's switch to GCP." ChatGPT updates the memory to "User uses GCP." Day 10: The user starts a brand new project and asks for backend suggestions. Because ChatGPT deleted the reason (budget limits) and only kept the state (uses GCP), it cannot help the user make the right decision for the new project. It forgot the connection between budget constraints and technology choice.</p>
+
+  <h2>04 — THE PM RECOMMENDATION</h2>
+  <h3>Cognitive Artifacts: Memory that preserves decisions, not just declarations</h3>
+  <p>Instead of real-time popups that interrupt active flow, ChatGPT will introduce a Passive Session Synthesis. When a conversation goes idle for 30 minutes, a background process analyzes the transcript to see if a meaningful Reasoning Shift or a permanent Rule of Thumb occurred.</p>
+  <p>The system quietly looks for two types of decision patterns: <strong>Stable Rules (Persistent defaults)</strong>: Heuristics the user consistently follows across multiple chats (e.g., "Prefers quick prototypes over scaling"). <strong>Decision Changes (Active pivots)</strong>: When a user explicitly changes their mind because of a specific constraint (e.g., "Switching from AWS to GCP because AWS is too expensive").</p>
+
+  <div class="diagram">
+                  [ USER SESSION GOES IDLE ]
+                              │
+               ( Passive Background Synthesis )
+                              │
+             ┌────────────────┴────────────────┐
+   [ Persistent Defaults ]             [ Active Pivots ]
+   e.g., "Prefers simple MVPs"         e.g., "AWS -> GCP due to budget"
+             └────────────────┬────────────────┘
+                              │
+              ( Lightweight Domain Categorization )
+                              │
+               [ Context-Linked Memory Saved ]
+  </div>
+
+  <h3>High-Level Requirements & Trade-offs</h3>
+  <p><strong>Anticipatory Pre-Fetching:</strong> To avoid database lookup delays when a user starts typing, the system runs a lightweight background check the moment a user clicks "New Chat" or starts typing.</p>
+  <p><strong>Zero-Blocking Generation:</strong> Memory retrieval must never delay the Time to First Byte (TTFB). If a memory look-up experiences a backend delay, the model generates immediately and gracefully weaves the context into the subsequent turn.</p>
+  <p><strong>Cost-Efficient Background Processing:</strong> Synthesis and pattern detection happen exclusively during session idle times using distilled, cost-efficient classification models.</p>
+  <p><strong>Conservative Injection:</strong> When retrieval confidence is low, the system should prefer omission over injecting potentially incorrect historical reasoning.</p>
+
+  <h2>05 — SUCCESS METRICS</h2>
+  <p><strong>Conversation Continuation Success Rate:</strong> The frequency with which ChatGPT correctly applies historical reasoning constraints to a fresh prompt on Turn 1 without being reminded by the user.</p>
+  <p><strong>Manual Re-Explanation Reduction Rate:</strong> A target 25% decrease in the number of times a user has to type things like "No, remember we are on a budget".</p>
+  <p><strong>North Star:</strong> Power-user 90-day retention lift (+8 pp) for users with at least one stored Cognitive Artifact vs. control.</p>
+
+  <h2>06 — PHASE 2 STRATEGY</h2>
+  <p>Building a complex, cross-domain knowledge graph database is explicitly out of scope for Phase 1. Instead, Phase 1 uses lightweight domain categorization to catch high-signal cases immediately with low engineering effort.</p>
+
+  <h2>07 — OPEN RISKS & MITIGATIONS</h2>
+  <p><strong>R1: Noise & Emotional Venting:</strong> Mitigation: The background code must require a clear, logical reason before saving a rule.</p>
+  <p><strong>R2: Outdated Frameworks:</strong> Mitigation: Enable time-decay weighting so newer memories naturally carry more weight.</p>
+  <p><strong>R3: Compute Costs:</strong> Mitigation: Limit passive synthesis strictly to extended, multi-turn "Power User" sessions.</p>
+</div>
+
+<script>
+  const btn = document.getElementById('themeToggle');
+  btn.addEventListener('click', () => {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    btn.textContent = isLight ? 'Day ☀' : 'Night ☾';
+  });
+</script>
 </body>
 </html>
