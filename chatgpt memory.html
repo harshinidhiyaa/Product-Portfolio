@@ -34,7 +34,13 @@
   h3 { font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 12px; }
   p { margin-bottom: 20px; font-size: 16px; }
 
-  .diagram { background: var(--box-bg); padding: 32px; border-radius: 8px; margin: 40px 0; border: 1px solid var(--border-dim); font-family: monospace; color: var(--ink); overflow-x: auto; white-space: pre; font-size: 13px; line-height: 1.4; }
+  .flow { display: flex; flex-direction: column; align-items: center; margin: 48px 0; }
+  .flow-node { background: var(--box-bg); border: 1px solid var(--border-dim); border-radius: 8px; padding: 14px 26px; text-align: center; color: var(--ink); font-size: 14px; font-weight: 600; }
+  .flow-node.accent { border: 1.5px solid var(--signal); }
+  .flow-sub { display: block; margin-top: 6px; font-size: 12px; font-weight: 400; color: var(--ink-soft); }
+  .flow-arrow { color: var(--signal); font-size: 18px; line-height: 1; margin: 2px 0; }
+  .flow-split { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 24px; width: 100%; margin: 2px 0; }
+  .flow-split .flow-node { flex: 1 1 220px; max-width: 280px; }
   
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 32px 0; }
   .box { background: var(--box-bg); padding: 24px; border-radius: 6px; border-left: 3px solid var(--signal); }
@@ -51,88 +57,94 @@
   
   <p class="subtitle">PRODUCT PORTFOLIO · STRATEGIC TEARDOWN</p>
   <h1>Rethinking AI Memory: ChatGPT</h1>
-  <p><strong>Product:</strong> ChatGPT (OpenAI) — Memory Feature</p>
+  <p><strong>Product:</strong> ChatGPT (OpenAI) Memory Feature</p>
   <p><strong>Vision:</strong> Evolving ChatGPT from an assistant that recalls fixed data into a partner that gathers user comprehension.</p>
-  <p><strong>Core Philosophy:</strong> The important thing that users teach ChatGPT isn't who they are—it's how they make decisions.</p>
+  <p><strong>Core Philosophy:</strong> The important thing to tailor ChatGPT to user preferences is not by sharing their identities but the ways in which users carry out their decision-making processes.</p>
 
   <h2>Why Now?</h2>
-  <p>AI assistants are quickly becoming long-term collaborators. As base model intelligence converges, continuity—not just raw reasoning power—will become the ultimate product differentiator. Memory must evolve from remembering users to understanding how they think.</p>
+  <p>AI assistants are quickly becoming long-term collaborators. With convergence of base model intelligence, continuity, along with reasoning, will be what distinguishes an AI product. Memory needs to evolve from remembering users to knowing how they think.</p>
 
-  <h2>01 — TARGET USERS</h2>
-  <p><strong>Two users, one memory model — and it only fits one of them</strong></p>
-  <p>ChatGPT Memory currently uses a single primitive: fact-based memory. If you mention you live in Chennai or code in Python, it remembers. This works for a casual user, but fails a collaborative power user entirely.</p>
+  <h2>1. TARGET USERS</h2>
+  <p>ChatGPT Memory is designed around a single notion: fact-based memory. If you tell it that you are based in a particular city or you code in Python, it remembers. But it works well for a casual user, not at all for a power user.</p>
   <div class="grid">
     <div class="box">
       <h3>CASUAL USER</h3>
-      <p><strong>Behavior:</strong> Uses ChatGPT for self-contained tasks—drafting emails, quick Q&A, summarizing content.</p>
-      <p><strong>Memory Need:</strong> Convenience. Don't make me re-state my city or preferred coding language. Static facts serve this user perfectly.</p>
+      <p><strong>Behavior:</strong> Uses ChatGPT for standalone tasks like drafting emails, quick questionnaire, summarizing content.</p>
+      <p><strong>Memory Need:</strong> Easy to use. Don't make me re-iterate my city or preferred coding language. Static facts work great for this user.</p>
     </div>
     <div class="box">
       <h3>POWER / COLLABORATIVE USER</h3>
-      <p><strong>Behavior:</strong> Uses ChatGPT as a strategic thought partner across weeks—research, engineering trade-offs, and evolving projects.</p>
-      <p><strong>Memory Need:</strong> Reasoning continuity. Not just isolated facts, but the logic and constraints behind decisions—the why, not just the what.</p>
+      <p><strong>Behavior:</strong> Engages with ChatGPT as a strategic thought partner over the course of weeks of research, engineering trade-offs, and project changes.</p>
+      <p><strong>Memory Need:</strong> Reasoning continuity. Not just facts in isolation, but the logic and constraints behind decisions. The why, not just the what.</p>
     </div>
   </div>
 
-  <h2>02 — WHAT'S WORKING</h2>
-  <p>The current baseline handles explicit details well. Any new recommendation must preserve these features to protect user trust.</p>
-  <p><strong>Silent Entity Extraction:</strong> Facts are captured automatically and silently mid-conversation. There is no friction or workflow interruption.</p>
-  <p><strong>User-Controlled Privacy:</strong> A centralized memory UI makes it simple to view, edit, or delete any specific fact, maintaining an essential trust layer.</p>
+  <h2>2. WHAT'S WORKING</h2>
+  <p>The current baseline is good at handling explicit details. New recommendation has to protect these features to protect user trust.</p>
+  <p><strong>Silent Entity Extraction:</strong> Currently, facts are captured automatically and silently mid-conversation causing no friction or workflow interruption.</p>
+  <p><strong>User-Controlled Privacy:</strong> A central memory interface allows easy access, editing or deletion of any particular fact, preserving an important layer of trust.</p>
 
-  <h2>03 — WHAT'S BROKEN</h2>
-  <h3>The cognitive gap: outcomes without reasoning</h3>
-  <p>Current Memory treats user identity as a flat list of isolated facts. It remembers what we say, but forgets why we said it.</p>
-  <p><strong>The Structural Mismatch:</strong> Today's memory model stores final outcomes (state). A true collaborative partner must store the reasoning behind them (decision functions).</p>
-  <p><strong>The Pivot Problem:</strong> Imagine a software developer working on a project: Day 1: They tell ChatGPT, "We are using AWS for our backend." ChatGPT memorizes this fact. Day 3: Because AWS pricing is too high for their startup budget, they tell ChatGPT, "Actually, let's switch to GCP." ChatGPT updates the memory to "User uses GCP." Day 10: The user starts a brand new project and asks for backend suggestions. Because ChatGPT deleted the reason (budget limits) and only kept the state (uses GCP), it cannot help the user make the right decision for the new project. It forgot the connection between budget constraints and technology choice.</p>
+  <h2>3. WHAT'S NOT WORKING</h2>
+  <p>Current Memory views the user identity as a flat list of disjoint facts. It remembers what we say but forgets why we say it. The memory model today stores the final outcome (state). A real collaborative partner needs to maintain the logic behind them (decision functions).</p>
+  <p>Consider a software developer working on a project:</p>
+  <p>Day 1: The first instruction is as follows: "We are using AWS for our backend." ChatGPT records this fact.</p>
+  <p>Day 3: But, due to high AWS pricing for their startup budget, the second instruction is, "Actually, let's switch to GCP." ChatGPT updates memory to "User uses GCP."</p>
+  <p>Day 10: The developer starts a new project and asks for backend suggestions.</p>
+  <p>But, as ChatGPT deleted the reason mentioning budget limits and retained only the state to use GCP, it cannot help the developer make the right decision for the new project. It "forgot" the connection between budget constraints and technology choice.</p>
 
-  <h2>04 — THE PM RECOMMENDATION</h2>
-  <h3>Cognitive Artifacts: Memory that preserves decisions, not just declarations</h3>
-  <p>Instead of real-time popups that interrupt active flow, ChatGPT will introduce a Passive Session Synthesis. When a conversation goes idle for 30 minutes, a background process analyzes the transcript to see if a meaningful Reasoning Shift or a permanent Rule of Thumb occurred.</p>
-  <p>The system quietly looks for two types of decision patterns: <strong>Stable Rules (Persistent defaults)</strong>: Heuristics the user consistently follows across multiple chats (e.g., "Prefers quick prototypes over scaling"). <strong>Decision Changes (Active pivots)</strong>: When a user explicitly changes their mind because of a specific constraint (e.g., "Switching from AWS to GCP because AWS is too expensive").</p>
+  <h2>4. THE RECOMMENDATION</h2>
+  <p>Therefore, we need a Memory that preserves decisions. So, ChatGPT will implement a Passive Session Synthesis rather than popups in real-time that interrupt the active flow. If a conversation is idle for 30 minutes, a background process analyzes the transcript for meaningful Reasoning Shift or permanent Rule of Thumb.</p>
+  <p>The system looks for two types of decision patterns:</p>
+  <p><strong>Stable Rules (recurring defaults)</strong>: Heuristics the user consistently follows across multiple chats (e.g., "Prefers quick prototypes over scaling" or "Always writes code with inline comments").</p>
+  <p><strong>Decision Changes (ongoing pivots)</strong>: When a user explicitly changes their mind because of a specific constraint (e.g., "Switching from AWS to GCP because AWS is too expensive").</p>
 
-  <div class="diagram">
-                  [ USER SESSION GOES IDLE ]
-                              │
-               ( Passive Background Synthesis )
-                              │
-             ┌────────────────┴────────────────┐
-   [ Persistent Defaults ]             [ Active Pivots ]
-   e.g., "Prefers simple MVPs"         e.g., "AWS -> GCP due to budget"
-             └────────────────┬────────────────┘
-                              │
-              ( Lightweight Domain Categorization )
-                              │
-               [ Context-Linked Memory Saved ]
+  <div class="flow">
+    <div class="flow-node">User session goes idle</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node accent">Passive Background Synthesis</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-split">
+      <div class="flow-node">Recurring Defaults<span class="flow-sub">"Prefers simple MVPs"</span></div>
+      <div class="flow-node">Ongoing Pivots<span class="flow-sub">"AWS → GCP due to budget"</span></div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node">Lightweight Domain Categorization</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-node accent" style="font-weight: 700;">Context-Linked Memory Saved</div>
   </div>
 
-  <h3>High-Level Requirements & Trade-offs</h3>
-  <p><strong>Anticipatory Pre-Fetching:</strong> To avoid database lookup delays when a user starts typing, the system runs a lightweight background check the moment a user clicks "New Chat" or starts typing.</p>
+  <p>When the user starts a relevant conversation, the stored reasoning is retrieved only when confidence exceeds a predefined threshold, seamlessly integrating the context into the prompt in the background.</p>
+
+  <h3>The Structure</h3>
+  <p>To prevent latency spikes and minimize compute costs, the MVP retrieval architecture must prioritize four strict product boundaries:</p>
+  <p><strong>Anticipatory Pre-Fetching:</strong> To avoid database lookup delays when a user starts typing, the system runs a lightweight background check the moment a user clicks "New Chat" or starts typing. Relevant memory constraints are loaded into the cache before they hit send.</p>
   <p><strong>Zero-Blocking Generation:</strong> Memory retrieval must never delay the Time to First Byte (TTFB). If a memory look-up experiences a backend delay, the model generates immediately and gracefully weaves the context into the subsequent turn.</p>
   <p><strong>Cost-Efficient Background Processing:</strong> Synthesis and pattern detection happen exclusively during session idle times using distilled, cost-efficient classification models rather than expensive frontier reasoning models.</p>
   <p><strong>Conservative Injection:</strong> When retrieval confidence is low, the system should prefer omission over injecting potentially incorrect historical reasoning.</p>
-  <p><strong>Lightweight Domain Categorization (Phase 1):</strong> To avoid the complexity of a massive knowledge graph database, Phase 1 stores memories as simple text strings categorized into basic taxonomies based on keyword classifiers.</p>
+  <p><strong>Lightweight Domain Categorization (Phase 1):</strong> To avoid the complexity of a massive knowledge graph database, Phase 1 stores memories as simple text strings categorized into basic taxonomies (e.g., Coding, Business, Writing) based on keyword classifiers.</p>
 
-  <h3>Trust and Transparency (The UX)</h3>
-  <p>If ChatGPT applies historical reasoning invisibly, users may lose trust in how responses are generated. We solve this with two clean UI features:</p>
+  <h3>The User Experience</h3>
+  <p>To solve potential loss of trust if ChatGPT applies historical reasoning invisibly and generates responses, two UI features are introduced:</p>
   <p><strong>Source Tags:</strong> When ChatGPT uses a saved decision to answer a prompt, a small label appears next to the response (e.g., "Using context from your Startup project"). Users can click it to see exactly what rule was applied.</p>
   <p><strong>Editable Cards:</strong> Inside the existing Memory panel, these rules are displayed as simple, editable text cards (e.g., "You prefer quick prototypes over scaling"). The user can easily edit, update, or delete them.</p>
 
-  <h2>05 — SUCCESS METRICS</h2>
-  <p><strong>Core Value Metrics</strong></p>
+  <h2>5. SUCCESS METRICS</h2>
+  <p>We track direct signals that measure if we are successfully preserving user continuity without adding system noise.</p>
   <p><strong>Conversation Continuation Success Rate:</strong> The frequency with which ChatGPT correctly applies historical reasoning constraints to a fresh prompt on Turn 1 without being reminded by the user.</p>
-  <p><strong>Manual Re-Explanation Reduction Rate:</strong> A target 25% decrease in the number of times a user has to type things like "No, remember we are on a budget".</p>
-  <p><strong>Business & Guardrail Metrics</strong></p>
-  <p><strong>North Star:</strong> Power-user 90-day retention lift (+8 pp) for users with at least one stored Cognitive Artifact vs. control.</p>
-  <p><strong>System Guardrail (Artifact Mismatch/Edit Rate):</strong> Target &lt; 15%. If users are constantly going into settings to delete or modify saved cards, our background classifier is too aggressive and creating noise.</p>
+  <p><strong>Manual Re-Explanation Reduction Rate:</strong> A target 25% decrease in the number of times a user has to type things like "No, remember we are on a budget" or "As I said before, I use Python."</p>
+  <p><strong>North Star:</strong> Power-user 90-day retention lift (+8 pp) for users with at least one stored passive background memory vs. explicit statement by user.</p>
+  <p><strong>System Guardrail (Artifact Mismatch/Edit Rate):</strong> Target &lt; 15%. If users are constantly going into settings to delete or modify saved cards, our background classifier is too aggressive and creates noise.</p>
 
-  <h2>06 — PHASE 2 STRATEGY</h2>
-  <p>Building a complex, cross-domain knowledge graph database is explicitly out of scope for Phase 1. Instead, Phase 1 uses lightweight domain categorization to catch high-signal cases immediately with low engineering effort.</p>
-  <p>Phase 2 will transition to a semantic graph database once Phase 1 validates that capturing decision functions improves continuity and retention.</p>
+  <h2>6. PHASE 2 STRATEGY</h2>
+  <p>Phase 1 uses lightweight domain categorization to catch high-signal cases immediately with low engineering effort. Phase 2 will transition to a semantic graph database once Phase 1 validates that capturing decision functions improves continuity and retention.</p>
 
-  <h2>07 — OPEN RISKS & MITIGATIONS</h2>
-  <p><strong>R1: Noise & Emotional Venting:</strong> Mitigation: The background code must require a clear, logical reason before saving a rule.</p>
-  <p><strong>R2: Outdated Frameworks:</strong> Mitigation: Enable time-decay weighting so newer memories naturally carry more weight, and show a quick, gentle reminder in the settings panel to clean up old project files.</p>
-  <p><strong>R3: Compute Costs:</strong> Mitigation: Limit passive synthesis strictly to extended, multi-turn "Power User" sessions.</p>
+  <h2>7. OPEN RISKS & MITIGATIONS</h2>
+  <p>A user might vent during a bad day ("I hate SQL, it's the worst database ever"), and the AI might incorrectly save "User never wants to use SQL."</p>
+  <p><strong>Mitigation:</strong> The background code must require a clear, logical reason ("switching because of performance issues"), rather than just an emotional comment, before saving a rule.</p>
+  <p>A business constraint from six months ago might no longer apply today.</p>
+  <p><strong>Mitigation:</strong> Enable time-decay weighting so newer memories naturally carry more weight, and show a quick, gentle reminder in the settings panel to clean up old project files.</p>
+  <p>Running background analysis on every single chat session is incredibly expensive.</p>
+  <p><strong>Mitigation:</strong> Limit passive synthesis strictly to extended, multi-turn "Power User" sessions rather than quick, one-off Q&As.</p>
 </div>
 
 <div class="container" style="margin-top: 40px; border-top: 1px solid var(--border-dim); padding-top: 20px;">
