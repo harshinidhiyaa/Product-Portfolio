@@ -29,7 +29,7 @@
 
   h1, h2, h3, strong { color: var(--ink); }
   h1 { font-weight: 800; font-size: 40px; line-height: 1.1; margin-bottom: 24px; }
-  .subtitle { font-size: 16px; font-weight: 600; color: var(--signal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+  .subtitle { font-size: 14px; font-weight: 700; color: var(--signal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 16px; }
   h2 { color: var(--signal); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 56px; margin-bottom: 20px; }
   h3 { font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 12px; }
   p { margin-bottom: 20px; font-size: 16px; }
@@ -49,11 +49,11 @@
   <button class="theme-toggle" id="themeToggle">Night ☾</button>
   <a href="./index.html" class="back-link">← Back to Portfolio</a>
   
-  <p class="subtitle">PRODUCT CASE STUDY · TEARDOWN</p>
+  <p class="subtitle">PRODUCT PORTFOLIO · STRATEGIC TEARDOWN</p>
   <h1>Rethinking AI Memory: ChatGPT</h1>
   <p><strong>Product:</strong> ChatGPT (OpenAI) — Memory Feature</p>
   <p><strong>Vision:</strong> Evolving ChatGPT from an assistant that recalls fixed data into a partner that gathers user comprehension.</p>
-  <p><strong>Core Philosophy:</strong> The important thing that users tailor ChatGPT to their preferences is not by sharing their identities but the ways in which they carry out their decision-making processes.</p>
+  <p><strong>Core Philosophy:</strong> The important thing that users teach ChatGPT isn't who they are—it's how they make decisions.</p>
 
   <h2>Why Now?</h2>
   <p>AI assistants are quickly becoming long-term collaborators. As base model intelligence converges, continuity—not just raw reasoning power—will become the ultimate product differentiator. Memory must evolve from remembering users to understanding how they think.</p>
@@ -108,25 +108,39 @@
   <h3>High-Level Requirements & Trade-offs</h3>
   <p><strong>Anticipatory Pre-Fetching:</strong> To avoid database lookup delays when a user starts typing, the system runs a lightweight background check the moment a user clicks "New Chat" or starts typing.</p>
   <p><strong>Zero-Blocking Generation:</strong> Memory retrieval must never delay the Time to First Byte (TTFB). If a memory look-up experiences a backend delay, the model generates immediately and gracefully weaves the context into the subsequent turn.</p>
-  <p><strong>Cost-Efficient Background Processing:</strong> Synthesis and pattern detection happen exclusively during session idle times using distilled, cost-efficient classification models.</p>
+  <p><strong>Cost-Efficient Background Processing:</strong> Synthesis and pattern detection happen exclusively during session idle times using distilled, cost-efficient classification models rather than expensive frontier reasoning models.</p>
   <p><strong>Conservative Injection:</strong> When retrieval confidence is low, the system should prefer omission over injecting potentially incorrect historical reasoning.</p>
+  <p><strong>Lightweight Domain Categorization (Phase 1):</strong> To avoid the complexity of a massive knowledge graph database, Phase 1 stores memories as simple text strings categorized into basic taxonomies based on keyword classifiers.</p>
+
+  <h3>Trust and Transparency (The UX)</h3>
+  <p>If ChatGPT applies historical reasoning invisibly, users may lose trust in how responses are generated. We solve this with two clean UI features:</p>
+  <p><strong>Source Tags:</strong> When ChatGPT uses a saved decision to answer a prompt, a small label appears next to the response (e.g., "Using context from your Startup project"). Users can click it to see exactly what rule was applied.</p>
+  <p><strong>Editable Cards:</strong> Inside the existing Memory panel, these rules are displayed as simple, editable text cards (e.g., "You prefer quick prototypes over scaling"). The user can easily edit, update, or delete them.</p>
 
   <h2>05 — SUCCESS METRICS</h2>
+  <p><strong>Core Value Metrics</strong></p>
   <p><strong>Conversation Continuation Success Rate:</strong> The frequency with which ChatGPT correctly applies historical reasoning constraints to a fresh prompt on Turn 1 without being reminded by the user.</p>
   <p><strong>Manual Re-Explanation Reduction Rate:</strong> A target 25% decrease in the number of times a user has to type things like "No, remember we are on a budget".</p>
+  <p><strong>Business & Guardrail Metrics</strong></p>
   <p><strong>North Star:</strong> Power-user 90-day retention lift (+8 pp) for users with at least one stored Cognitive Artifact vs. control.</p>
+  <p><strong>System Guardrail (Artifact Mismatch/Edit Rate):</strong> Target &lt; 15%. If users are constantly going into settings to delete or modify saved cards, our background classifier is too aggressive and creating noise.</p>
 
   <h2>06 — PHASE 2 STRATEGY</h2>
   <p>Building a complex, cross-domain knowledge graph database is explicitly out of scope for Phase 1. Instead, Phase 1 uses lightweight domain categorization to catch high-signal cases immediately with low engineering effort.</p>
+  <p>Phase 2 will transition to a semantic graph database once Phase 1 validates that capturing decision functions improves continuity and retention.</p>
 
   <h2>07 — OPEN RISKS & MITIGATIONS</h2>
   <p><strong>R1: Noise & Emotional Venting:</strong> Mitigation: The background code must require a clear, logical reason before saving a rule.</p>
-  <p><strong>R2: Outdated Frameworks:</strong> Mitigation: Enable time-decay weighting so newer memories naturally carry more weight.</p>
+  <p><strong>R2: Outdated Frameworks:</strong> Mitigation: Enable time-decay weighting so newer memories naturally carry more weight, and show a quick, gentle reminder in the settings panel to clean up old project files.</p>
   <p><strong>R3: Compute Costs:</strong> Mitigation: Limit passive synthesis strictly to extended, multi-turn "Power User" sessions.</p>
 </div>
+
+<div class="container" style="margin-top: 40px; border-top: 1px solid var(--border-dim); padding-top: 20px;">
   <p style="font-size: 14px; font-style: italic; color: var(--ink-soft);">
-    <strong>Note:</strong> As of June 2026, OpenAI has introduced "Dreaming V3," which automates background consolidation of user history. While this is a significant step toward structural memory,this case study focuses on the 'why' behind a decision over the distillation of facts and preferences.
+    <strong>Note:</strong> As of June 2026, OpenAI has introduced "Dreaming V3," which automates background consolidation of user history. While this is a significant step toward structural memory, this case study focuses on the 'why' behind a decision over the distillation of facts and preferences.
   </p>
+</div>
+
 <script>
   const btn = document.getElementById('themeToggle');
   btn.addEventListener('click', () => {
