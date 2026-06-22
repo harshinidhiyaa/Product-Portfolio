@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Rethinking AI Memory: ChatGPT | Harshini Dhiyaa Velsamy</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #ffffff;
@@ -24,36 +24,67 @@
     --box-bg: rgba(59, 130, 246, 0.05);
   }
 
-  body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-soft); line-height: 1.6; padding: 60px 40px; transition: 0.3s; }
-  .container { max-width: 850px; margin: 0 auto; position: relative; }
+  * {
+    box-sizing: border-box;
+  }
+
+  body { 
+    margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink-soft); line-height: 1.6; 
+    padding: 80px 24px 60px 24px; transition: 0.3s; 
+  }
+  .container { max-width: 760px; margin: 0 auto; position: relative; width: 100%; }
 
   h1, h2, h3, strong { color: var(--ink); }
-  h1 { font-weight: 800; font-size: 40px; line-height: 1.1; margin-bottom: 24px; }
-  .subtitle { font-size: 14px; font-weight: 700; color: var(--signal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 16px; }
+  h1 { font-weight: 800; font-size: 40px; line-height: 1.15; margin-bottom: 24px; margin-top: 16px; }
+  .subtitle { font-size: 13px; font-weight: 700; color: var(--signal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 16px; }
   h2 { color: var(--signal); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 56px; margin-bottom: 20px; }
   h3 { font-size: 18px; font-weight: 700; margin-top: 32px; margin-bottom: 12px; }
   p { margin-bottom: 20px; font-size: 16px; }
 
-  .flow { display: flex; flex-direction: column; align-items: center; margin: 48px 0; }
-  .flow-node { background: var(--box-bg); border: 1px solid var(--border-dim); border-radius: 8px; padding: 14px 26px; text-align: center; color: var(--ink); font-size: 14px; font-weight: 600; }
+  /* Flowchart styles */
+  .flow { display: flex; flex-direction: column; align-items: center; margin: 48px 0; width: 100%; }
+  .flow-node { background: var(--box-bg); border: 1px solid var(--border-dim); border-radius: 8px; padding: 14px 24px; text-align: center; color: var(--ink); font-size: 14px; font-weight: 600; width: 100%; max-width: 320px; }
   .flow-node.accent { border: 1.5px solid var(--signal); }
   .flow-sub { display: block; margin-top: 6px; font-size: 12px; font-weight: 400; color: var(--ink-soft); }
-  .flow-arrow { color: var(--signal); font-size: 18px; line-height: 1; margin: 2px 0; }
-  .flow-split { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 24px; width: 100%; margin: 2px 0; }
-  .flow-split .flow-node { flex: 1 1 220px; max-width: 280px; }
+  .flow-arrow { color: var(--signal); font-size: 18px; line-height: 1; margin: 6px 0; }
+  .flow-split { display: flex; flex-direction: row; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 16px; width: 100%; max-width: 600px; margin: 6px 0; }
+  .flow-split .flow-node { flex: 1 1 240px; max-width: 280px; }
   
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 32px 0; }
+  /* Grid layouts */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 32px 0; }
   .box { background: var(--box-bg); padding: 24px; border-radius: 6px; border-left: 3px solid var(--signal); }
 
-  .theme-toggle { position: absolute; top: -20px; right: 0; background: none; border: 1px solid var(--border-dim); color: var(--ink); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-transform: uppercase; font-size: 10px; }
-  .back-link { display: inline-block; margin-bottom: 24px; color: var(--signal); text-decoration: none; font-weight: 600; font-size: 14px; }
+  .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; width: 100%; }
+  .theme-toggle { background: none; border: 1px solid var(--border-dim); color: var(--ink); padding: 6px 14px; border-radius: 999px; cursor: pointer; text-transform: uppercase; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
+  .back-link { display: inline-block; color: var(--signal); text-decoration: none; font-weight: 600; font-size: 14px; }
+
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    body { padding: 40px 20px 40px 20px; }
+    h1 { font-size: 32px; }
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+    .flow-split { flex-direction: column; align-items: center; gap: 6px; }
+    .flow-split .flow-node { max-width: 320px; width: 100%; }
+    
+    /* Injecting secondary directional indicator for split logic on mobile viewports */
+    .flow-split .flow-node:first-child::after {
+      content: "↓";
+      display: block;
+      color: var(--signal);
+      font-size: 18px;
+      margin-top: 12px;
+      margin-bottom: -6px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <button class="theme-toggle" id="themeToggle">Night ☾</button>
-  <a href="./index.html" class="back-link">← Back to Portfolio</a>
+  <div class="header-actions">
+    <a href="./index.html" class="back-link">← Back to Portfolio</a>
+    <button class="theme-toggle" id="themeToggle">Night ☾</button>
+  </div>
   
   <p class="subtitle">PRODUCT PORTFOLIO · STRATEGIC TEARDOWN</p>
   <h1>Rethinking AI Memory: ChatGPT</h1>
@@ -133,7 +164,7 @@
   <p><strong>Conversation Continuation Success Rate:</strong> The frequency with which ChatGPT correctly applies historical reasoning constraints to a fresh prompt on Turn 1 without being reminded by the user.</p>
   <p><strong>Manual Re-Explanation Reduction Rate:</strong> A target 25% decrease in the number of times a user has to type things like "No, remember we are on a budget" or "As I said before, I use Python."</p>
   <p><strong>North Star:</strong> Power-user 90-day retention lift (+8 pp) for users with at least one stored passive background memory vs. explicit statement by user.</p>
-  <p><strong>System Guardrail (Artifact Mismatch/Edit Rate):</strong> Target &lt; 15%. If users are constantly going into settings to delete or modify saved cards, our background classifier is too aggressive and creates noise.</p>
+  <p><strong>System Guardrail (Artifact Mismatch/Edit Rate):</strong> Target less than 15%. If users are constantly going into settings to delete or modify saved cards, our background classifier is too aggressive and creates noise.</p>
 
   <h2>6. PHASE 2 STRATEGY</h2>
   <p>Phase 1 uses lightweight domain categorization to catch high-signal cases immediately with low engineering effort. Phase 2 will transition to a semantic graph database once Phase 1 validates that capturing decision functions improves continuity and retention.</p>
@@ -156,9 +187,11 @@
 <script>
   const btn = document.getElementById('themeToggle');
   btn.addEventListener('click', () => {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
-    btn.textContent = isLight ? 'Day ☀' : 'Night ☾';
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    btn.textContent = newTheme === 'light' ? 'Night ☾' : 'Day ☀';
   });
 </script>
 </body>
